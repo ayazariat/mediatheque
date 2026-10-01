@@ -1,6 +1,6 @@
 public interface Empruntable {
 
-    void emprunter() throws LivreIndisponibleException;
+    void emprunter() throws DocumentIndisponibleException;
 
     void rendre();
 

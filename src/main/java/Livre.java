@@ -17,9 +17,10 @@ public class Livre extends Document implements Empruntable {
     }
 
     @Override
-    public void emprunter() throws LivreIndisponibleException {
+    public void emprunter() throws DocumentIndisponibleException {
+
         if (!disponible) {
-            throw new LivreIndisponibleException(titre);
+            throw new DocumentIndisponibleException(titre);
         }
 
         disponible = false;
