@@ -1,5 +1,8 @@
 public interface Empruntable {
-void emprunter();
-void rendre();
-boolean estDisponible();
+
+    void emprunter() throws LivreIndisponibleException;
+
+    void rendre();
+
+    boolean estDisponible();
 }
