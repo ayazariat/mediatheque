@@ -1,50 +1,34 @@
-import java.util.*;
-
 public class Main {
 
     public static void main(String[] args) {
 
-        Livre livre1 = new Livre("Clean Code", 2008, "R. Martin", 464);
-        Livre livre2 = new Livre("Refactoring", 1999, "M. Fowler", 448);
-        Revue revue1 = new Revue("Science", 2026, 412);
+        // ==============================
+        // 1. Création des documents
+        // ==============================
 
-        System.out.println("=== DOCUMENTS ===");
+        Livre livre1 = new Livre(
+                "Clean Code",
+                2008,
+                "Robert C. Martin",
+                464
+        );
 
-        System.out.println(livre1.descriptionCourte());
-        System.out.println(livre2.descriptionCourte());
-        System.out.println(revue1.descriptionCourte());
+        Livre livre2 = new Livre(
+                "Refactoring",
+                1999,
+                "Martin Fowler",
+                448
+        );
 
+        Revue revue1 = new Revue(
+                "Science",
+                2026,
+                412
+        );
 
-        System.out.println("\n=== EMPRUNT ===");
-
-        System.out.println("Disponible : " + livre1.estDisponible());
-
-        try {
-            livre1.emprunter();
-            System.out.println("Après emprunt : " + livre1.estDisponible());
-
-            livre1.rendre();
-            System.out.println("Après retour : " + livre1.estDisponible());
-
-        } catch (LivreIndisponibleException e) {
-            System.out.println("Exception : " + e.getMessage());
-        }
-
-
-        System.out.println("\n=== DOUBLE EMPRUNT ===");
-
-        try {
-            livre2.emprunter();
-            System.out.println("Livre 2 emprunté.");
-
-            livre2.emprunter();
-
-        } catch (LivreIndisponibleException e) {
-            System.out.println("Exception : " + e.getMessage());
-        }
-
-
-        System.out.println("\n=== CATALOGUE ===");
+        // ==============================
+        // 2. Création du catalogue
+        // ==============================
 
         Catalogue<Document> catalogue = new Catalogue<>();
 
@@ -52,38 +36,109 @@ public class Main {
         catalogue.ajouter(livre2);
         catalogue.ajouter(revue1);
 
+        // ==============================
+        // 3. Affichage du catalogue
+        // ==============================
+
+        System.out.println("===== CATALOGUE =====");
+
         catalogue.afficherTout();
 
+        // ==============================
+        // 4. Recherche d'un document
+        // ==============================
 
-        System.out.println("\n=== RECHERCHE ===");
+        System.out.println("\n===== RECHERCHE =====");
 
+        catalogue.rechercherParTitre("Clean Code")
+                .ifPresent(document ->
+                        System.out.println(
+                                "Document trouvé : "
+                                        + document.descriptionCourte()
+                        )
+                );
+
+        // ==============================
+        // 5. Bibliothécaire par composition
+        // ==============================
+
+        System.out.println("\n===== BIBLIOTHÉCAIRE =====");
+
+        Bibliothecaire bibliothecaire =
+                new Bibliothecaire("Aya", catalogue);
+
+        bibliothecaire.accueillir();
+
+        // ==============================
+        // 6. Gestionnaire des emprunts
+        // ==============================
+
+        System.out.println("\n===== EMPRUNTS =====");
+
+        EmpruntManager manager =
+                new EmpruntManager(catalogue);
+
+        // Premier emprunt
         try {
+            manager.emprunter("Clean Code");
 
-            Document resultat =
-                    catalogue.rechercherParTitre("Science");
+            System.out.println(
+                    "Emprunt réussi : Clean Code"
+            );
 
-            System.out.println("Document trouvé : "
-                    + resultat.descriptionCourte());
+        } catch (MediathequeException e) {
 
-        } catch (TitreIntrouvableException e) {
-            System.out.println("Exception : " + e.getMessage());
+            System.out.println(
+                    "Erreur : " + e.getMessage()
+            );
         }
 
+        // ==============================
+        // 7. Tentative de double emprunt
+        // ==============================
 
-        System.out.println("\n=== RECHERCHE TITRE INEXISTANT ===");
+        System.out.println("\n===== DOUBLE EMPRUNT =====");
 
         try {
+            manager.emprunter("Clean Code");
 
-            Document resultat =
-                    catalogue.rechercherParTitre("Nature");
+        } catch (MediathequeException e) {
 
-            System.out.println("Document trouvé : "
-                    + resultat.descriptionCourte());
-
-        } catch (TitreIntrouvableException e) {
-            System.out.println("Exception : " + e.getMessage());
+            System.out.println(
+                    "Erreur : " + e.getMessage()
+            );
         }
 
+        // ==============================
+        // 8. Emprunt d'un document inexistant
+        // ==============================
 
+        System.out.println("\n===== DOCUMENT INEXISTANT =====");
+
+        try {
+            manager.emprunter("Document Fantôme");
+
+        } catch (MediathequeException e) {
+
+            System.out.println(
+                    "Erreur : " + e.getMessage()
+            );
+        }
+
+        // ==============================
+        // 9. Vérification de disponibilité
+        // ==============================
+
+        System.out.println("\n===== DISPONIBILITÉ =====");
+
+        System.out.println(
+                "Clean Code disponible : "
+                        + livre1.estDisponible()
+        );
+
+        System.out.println(
+                "Refactoring disponible : "
+                        + livre2.estDisponible()
+        );
     }
 }

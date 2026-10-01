@@ -1,4 +1,6 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class Catalogue<T extends Document> {
 
@@ -8,21 +10,19 @@ public class Catalogue<T extends Document> {
         elements.add(element);
     }
 
-    public T rechercherParTitre(String titre)
-            throws TitreIntrouvableException {
-
+    public Optional<T> rechercherParTitre(String titre) {
         return elements.stream()
                 .filter(d -> d.getTitre().equalsIgnoreCase(titre))
-                .findFirst()
-                .orElseThrow(() -> new TitreIntrouvableException(titre));
+                .findFirst();
     }
 
     public void afficherTout() {
-        elements.forEach(d -> System.out.println(d.descriptionCourte()));
+        elements.forEach(d ->
+                System.out.println(d.descriptionCourte())
+        );
     }
 
     public static <T extends Comparable<T>> T max(List<T> liste) {
-
         T m = liste.get(0);
 
         for (T e : liste) {
